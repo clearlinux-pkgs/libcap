@@ -39,6 +39,8 @@ libcap.so.2:cap_launcher_setuid
 libcap.so.2:cap_max_bits
 libcap.so.2:cap_mode_name
 libcap.so.2:cap_new_launcher
+libcap.so.2:cap_prctl
+libcap.so.2:cap_prctlw
 libcap.so.2:cap_reset_ambient
 libcap.so.2:cap_set_ambient
 libcap.so.2:cap_set_fd
