@@ -4,8 +4,10 @@ libcap.so.2:cap_clear_flag
 libcap.so.2:cap_compare
 libcap.so.2:cap_copy_ext
 libcap.so.2:cap_copy_int
+libcap.so.2:cap_copy_int_check
 libcap.so.2:cap_drop_bound
 libcap.so.2:cap_dup
+libcap.so.2:cap_fill
 libcap.so.2:cap_free
 libcap.so.2:cap_from_name
 libcap.so.2:cap_from_text
