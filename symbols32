@@ -1,4 +1,5 @@
 libcap.so.2:__so_start
+libcap.so.2:_libcap_initialize
 libcap.so.2:_libcap_strdup
 libcap.so.2:cap_clear
 libcap.so.2:cap_clear_flag
