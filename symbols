@@ -72,5 +72,6 @@ libpsx.so.2:__psx_syscall
 libpsx.so.2:__so_start
 libpsx.so.2:__wrap_pthread_create
 libpsx.so.2:psx_load_syscalls
+libpsx.so.2:psx_set_sensitivity
 libpsx.so.2:psx_syscall3
 libpsx.so.2:psx_syscall6
