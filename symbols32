@@ -1,6 +1,3 @@
-libcap.so.2:__so_start
-libcap.so.2:_libcap_initialize
-libcap.so.2:_libcap_strdup
 libcap.so.2:cap_clear
 libcap.so.2:cap_clear_flag
 libcap.so.2:cap_compare
@@ -69,7 +66,6 @@ libcap.so.2:capgetp
 libcap.so.2:capsetp
 libcap.so.2:psx_load_syscalls
 libpsx.so.2:__psx_syscall
-libpsx.so.2:__so_start
 libpsx.so.2:__wrap_pthread_create
 libpsx.so.2:psx_load_syscalls
 libpsx.so.2:psx_set_sensitivity
