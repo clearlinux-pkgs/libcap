@@ -5,10 +5,10 @@
 #
 %define keepstatic 1
 Name     : libcap
-Version  : 2.68
-Release  : 61
-URL      : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.68.tar
-Source0  : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.68.tar
+Version  : 2.69
+Release  : 62
+URL      : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.69.tar.xz
+Source0  : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.69.tar.xz
 Summary  : capability library: includes libcap2 file caps, setcap, getcap and capsh
 Group    : Development/Tools
 License  : BSD-3-Clause GPL-2.0
@@ -119,10 +119,13 @@ staticdev32 components for the libcap package.
 
 
 %prep
-%setup -q -n libcap-2.68
-cd %{_builddir}/libcap-2.68
+%setup -q -n libcap-2.69
+cd %{_builddir}/libcap-2.69
 pushd ..
-cp -a libcap-2.68 build32
+cp -a libcap-2.69 build32
+popd
+pushd ..
+cp -a libcap-2.69 buildavx2
 popd
 
 %build
@@ -130,15 +133,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1679933363
+export SOURCE_DATE_EPOCH=1684172260
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
-export FCFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
-export FFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
-export CXXFLAGS="$CXXFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export CFLAGS="$CFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FCFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export CXXFLAGS="$CXXFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
 make  %{?_smp_mflags}  LIBATTR=yes PAM_CAP=yes INDENT= SYSTEM_HEADERS=/usr/include RAISE_SETFCAP=no
 
 pushd ../build32/
@@ -149,9 +152,17 @@ export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 make  %{?_smp_mflags}  LIBATTR=yes PAM_CAP=yes INDENT= SYSTEM_HEADERS=/usr/include RAISE_SETFCAP=no lib=/usr/lib32 LIBATTR=yes PAM_CAP=yes INDENT= SYSTEM_HEADERS=/usr/include RAISE_SETFCAP=no
 popd
+pushd ../buildavx2
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
+make  %{?_smp_mflags}  LIBATTR=yes PAM_CAP=yes INDENT= SYSTEM_HEADERS=/usr/include RAISE_SETFCAP=no
+popd
 
 %install
-export SOURCE_DATE_EPOCH=1679933363
+export SOURCE_DATE_EPOCH=1684172260
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libcap
 cp %{_builddir}/libcap-%{version}/License %{buildroot}/usr/share/package-licenses/libcap/682fe08e594eabefd7970be40b1908df3d7f5c46 || :
@@ -173,11 +184,15 @@ for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
 popd
+pushd ../buildavx2/
+%make_install_v3 DESTDIR=%{buildroot} prefix=/usr SBINDIR=/usr/bin RAISE_SETFCAP=no
+popd
 %make_install DESTDIR=%{buildroot} prefix=/usr SBINDIR=/usr/bin RAISE_SETFCAP=no
 ## install_append content
 mkdir -p %{buildroot}/usr/lib32/pkgconfig
 sed 's/64/32/g' %{buildroot}/usr/lib64/pkgconfig/libcap.pc > %{buildroot}/usr/lib32/pkgconfig/libcap.pc
 ## install_append end
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -283,17 +298,17 @@ sed 's/64/32/g' %{buildroot}/usr/lib64/pkgconfig/libcap.pc > %{buildroot}/usr/li
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libcap.so.2
-/usr/lib64/libcap.so.2.68
+/usr/lib64/libcap.so.2.69
 /usr/lib64/libpsx.so.2
-/usr/lib64/libpsx.so.2.68
+/usr/lib64/libpsx.so.2.69
 /usr/lib64/security/pam_cap.so
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libcap.so.2
-/usr/lib32/libcap.so.2.68
+/usr/lib32/libcap.so.2.69
 /usr/lib32/libpsx.so.2
-/usr/lib32/libpsx.so.2.68
+/usr/lib32/libpsx.so.2.69
 
 %files license
 %defattr(0644,root,root,0755)
