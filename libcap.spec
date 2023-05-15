@@ -6,7 +6,7 @@
 %define keepstatic 1
 Name     : libcap
 Version  : 2.69
-Release  : 62
+Release  : 63
 URL      : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.69.tar.xz
 Source0  : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.69.tar.xz
 Summary  : capability library: includes libcap2 file caps, setcap, getcap and capsh
@@ -124,16 +124,13 @@ cd %{_builddir}/libcap-2.69
 pushd ..
 cp -a libcap-2.69 build32
 popd
-pushd ..
-cp -a libcap-2.69 buildavx2
-popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1684172260
+export SOURCE_DATE_EPOCH=1684172462
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -152,17 +149,9 @@ export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 make  %{?_smp_mflags}  LIBATTR=yes PAM_CAP=yes INDENT= SYSTEM_HEADERS=/usr/include RAISE_SETFCAP=no lib=/usr/lib32 LIBATTR=yes PAM_CAP=yes INDENT= SYSTEM_HEADERS=/usr/include RAISE_SETFCAP=no
 popd
-pushd ../buildavx2
-export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
-export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
-export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
-export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
-export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
-make  %{?_smp_mflags}  LIBATTR=yes PAM_CAP=yes INDENT= SYSTEM_HEADERS=/usr/include RAISE_SETFCAP=no
-popd
 
 %install
-export SOURCE_DATE_EPOCH=1684172260
+export SOURCE_DATE_EPOCH=1684172462
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libcap
 cp %{_builddir}/libcap-%{version}/License %{buildroot}/usr/share/package-licenses/libcap/682fe08e594eabefd7970be40b1908df3d7f5c46 || :
@@ -184,15 +173,11 @@ for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
 popd
-pushd ../buildavx2/
-%make_install_v3 DESTDIR=%{buildroot} prefix=/usr SBINDIR=/usr/bin RAISE_SETFCAP=no
-popd
 %make_install DESTDIR=%{buildroot} prefix=/usr SBINDIR=/usr/bin RAISE_SETFCAP=no
 ## install_append content
 mkdir -p %{buildroot}/usr/lib32/pkgconfig
 sed 's/64/32/g' %{buildroot}/usr/lib64/pkgconfig/libcap.pc > %{buildroot}/usr/lib32/pkgconfig/libcap.pc
 ## install_append end
-/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
