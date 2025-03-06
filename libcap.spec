@@ -7,10 +7,10 @@
 #
 %define keepstatic 1
 Name     : libcap
-Version  : 2.74
-Release  : 70
-URL      : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.74.tar.gz
-Source0  : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.74.tar.gz
+Version  : 2.75
+Release  : 71
+URL      : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.75.tar.gz
+Source0  : https://mirrors.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.75.tar.gz
 Summary  : capability library: includes libcap2 file caps, setcap, getcap and capsh
 Group    : Development/Tools
 License  : BSD-3-Clause GPL-2.0
@@ -121,13 +121,13 @@ staticdev32 components for the libcap package.
 
 
 %prep
-%setup -q -n libcap-2.74
-cd %{_builddir}/libcap-2.74
+%setup -q -n libcap-2.75
+cd %{_builddir}/libcap-2.75
 pushd ..
-cp -a libcap-2.74 build32
+cp -a libcap-2.75 build32
 popd
 pushd ..
-cp -a libcap-2.74 buildavx2
+cp -a libcap-2.75 buildavx2
 popd
 
 %build
@@ -135,7 +135,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1741033581
+export SOURCE_DATE_EPOCH=1741295557
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -186,7 +186,7 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1741033581
+export SOURCE_DATE_EPOCH=1741295557
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libcap
 cp %{_builddir}/libcap-%{version}/License %{buildroot}/usr/share/package-licenses/libcap/682fe08e594eabefd7970be40b1908df3d7f5c46 || :
@@ -325,17 +325,17 @@ sed 's/64/32/g' %{buildroot}/usr/lib64/pkgconfig/libcap.pc > %{buildroot}/usr/li
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libcap.so.2
-/usr/lib64/libcap.so.2.74
+/usr/lib64/libcap.so.2.75
 /usr/lib64/libpsx.so.2
-/usr/lib64/libpsx.so.2.74
+/usr/lib64/libpsx.so.2.75
 /usr/lib64/security/pam_cap.so
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libcap.so.2
-/usr/lib32/libcap.so.2.74
+/usr/lib32/libcap.so.2.75
 /usr/lib32/libpsx.so.2
-/usr/lib32/libpsx.so.2.74
+/usr/lib32/libpsx.so.2.75
 
 %files license
 %defattr(0644,root,root,0755)
